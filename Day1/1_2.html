@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AdventOfCode_Day1_2</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <input type="file" id="fileInput">
+
+    <script>
+      
+      const numbers = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+
+      function searchSubstring(mainString, subStrings){
+          const results = [];
+          subStrings.forEach(substring => {
+              let position = mainString.indexOf(substring);
+              while (position !== -1) {
+                  results.push({index: position, value: substring});
+                  position = mainString.indexOf(substring, position + 1);
+              }
+          });
+          return results.sort((a, b) => a.index - b.index);
+      }
+
+
+      function changeStringToNumber(array) {
+          const numberMap = {
+              "one": "1",
+              "two": "2",
+              "three": "3",
+              "four": "4",
+              "five": "5",
+              "six": "6",
+              "seven": "7",
+              "eight": "8",
+              "nine": "9"
+          };
+
+          return array.map(item => {
+              return numberMap[item.value] ? numberMap[item.value] : item.value;
+          });
+      }
+
+      function searchNumbers(line) {
+          let ordre = searchSubstring(line, numbers);
+          return changeStringToNumber(ordre);
+      }
+
+      document.getElementById('fileInput').addEventListener('change', function(event) {
+          const file = event.target.files[0];
+          if (!file) {
+              return;
+          }
+
+          const reader = new FileReader();
+          reader.onload = function(e) {
+              const contents = e.target.result;
+              const lines = contents.split('\n'); 
+
+              var total = 0;
+
+              lines.forEach(line => {
+                let numberStrings = searchNumbers(line);
+                console.log(numberStrings);
+                let firstNumber = numberStrings[0];
+                let lastNumber = numberStrings[numberStrings.length - 1];
+                let lineTotal = firstNumber !== undefined && lastNumber !== undefined ? firstNumber + lastNumber : '';
+                console.log(lineTotal);
+                total += parseInt(lineTotal);
+              });
+              
+              console.log(total);
+
+              const lineDiv =document.createElement('div');
+              lineDiv.textContent = "Solution:" + total;
+              document.body.appendChild(lineDiv);
+
+          };
+
+          reader.readAsText(file);
+      });
+    </script>
+  </body>
+</html>
